@@ -3,7 +3,8 @@ both Player 1 & 2 have 3 lives each
 game continues until either one player has no life remain
 
 
-Game mechanics - loop
+Game mechanics 
+- loop if P1 or P2 life isn't 0
 question is asked
 take answer from Player 1 
   if correct, update score: win value
