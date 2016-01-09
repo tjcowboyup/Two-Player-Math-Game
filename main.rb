@@ -1,64 +1,114 @@
-require "./logic"
+ require "./logic"
 require "./player"
 
-P1 = Player.new
-#P1.P1_life = 3
-#P1.P1_score = 0
-P2 = Player.new
-#P2.P2_life = 3
-#P2.P2_score = 0
+# currentPlayer = 0
+# players = []
+# players << Player.new
+# players << Player.new
+
+def setup
+
+  p "You are Player #{@turn}. What is your name?"
+  name = gets.chomp
+  @player1 = Player.new(name)
+  # invalidname
+  @turn += 1
+  p "You are Player #{@turn}. What is your name?"
+  name = gets.chomp
+  @player2 = Player.new(name)  
+  # invalidname
+  @turn -= 1
+
+end
+
 def generate_question
-  while (@P1_life > 0 || @P2_life > 0)
-    puts "It's Player #{@turn}'s turn:"
-    prompt_player_for_answer
-    verify_answer
-    scores_P1
-    puts "It's Player #{@turn}'s turn:"
-    prompt_player_for_answer
-    verify_answer
-    scores_P2
-  end
+
+  random_numbers
+  random_operator
+  p "What is #{@n1} #{@operator} #{@n2}"
+  @player_ans =gets.chomp.to_i
+
 end
 
 def prompt_player_for_answer
-  random_numbers
-  p "What is #{@n1} + #{@n2}"
-  @player_ans =gets.chomp.to_i
+
+  puts "It's  Player #{@turn}'s turn:"
+
 end
 
 def verify_answer
-  @correct_ans = @n1 + @n2
+
+  @correct_ans = @n1.send @operator, @n2
   if @correct_ans == @player_ans
-    @player_answer = true
+   @player_answer = true
   else          
-    @player_answer = false
+   @player_answer = false
   end
+
 end
 
 def scores_P1
+
   @turn += 1 
   if verify_answer
-    @P1_score += 1
-    p "P1 score: #{@P1_score} P2 score: #{@P2_score}"
-    p "P1 life: #{@P1_life} P2 score: #{@P2_life}"
+    @player1.score += 1
   else
-    @P1_life -= 1
-    p "P1 score: #{@P1_score} P2 score: #{@P2_score}"
-    p "P1 life: #{@P1_life} P2 score: #{@P2_life}"
+    @player1.life -= 1
   end
+
 end
 
 def scores_P2
+
   @turn -= 1
   if verify_answer
-    @P2_score += 1
-    p "P1 score: #{@P1_score} P2 score: #{@P2_score}"      
-    p "P1 life: #{@P1_life} P2 score: #{@P2_life}"
+    @player2.score += 1
   else
-    @P2_life -= 1
-    p "P1 score: #{@P1_score} P2 score: #{@P2_score}"    
-    p "P1 life: #{@P1_life} P2 score: #{@P2_life}"  
+    @player2.life -= 1
   end
+
 end
 
-generate_question
+def scoreboard
+
+    puts "P1 score: #{@player1.score} | P2 score: #{@player2.score}"
+    puts "P1 life: #{@player1.life} | P2 life: #{@player2.life}"
+    puts "\n"
+
+end
+
+def repeat
+
+  setup
+  game
+  p "Do you want to keep playing?[yes/no] "
+  @answer = gets.chomp
+  if @answer == "yes" || @answer == "YES"
+    setup
+    game
+    repeat
+  else
+    scoreboard
+    return
+  end
+
+end
+
+def game
+  
+  while @player1.life > 0 && @player2.life > 0 do
+    prompt_player_for_answer
+    generate_question
+    verify_answer
+    scores_P1
+    prompt_player_for_answer
+    generate_question
+    verify_answer
+    scores_P2
+    scoreboard
+  end
+  puts "Game over"
+  
+end
+
+repeat
