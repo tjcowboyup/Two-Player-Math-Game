@@ -1,22 +1,24 @@
 require "./logic"
 require "./player"
 
-# currentPlayer = 0
-# players = []
-# players << Player.new
-# players << Player.new
+@turn = 1
+
+class InvalidGuessError < StandardError
+end
+class InvalidGuessError < StandardError
+end
 
 def setup
 
   p "You are Player #{@turn}. What is your name?"
   name = gets.chomp
   @player1 = Player.new(name)
-  # invalidname
+  @player1.raise_error_if_invalid
   @turn += 1
   p "You are Player #{@turn}. What is your name?"
   name = gets.chomp
   @player2 = Player.new(name)  
-  # invalidname
+  @player2.raise_error_if_invalid
   @turn -= 1
 
 end
@@ -26,8 +28,23 @@ def generate_question
   random_numbers
   random_operator
   p "What is #{@n1} #{@operator} #{@n2}"
-  @player_ans =gets.chomp.to_i
+  @player_ans =gets.chomp
+  invalid_Guess_Error
+  @player_ans = @player_ans.to_i
 
+end
+
+def invalid_Guess_Error
+
+  begin
+    if @player_ans == "" || !(@player_ans.is_a? Integer)
+      raise InvalidGuessError, "Not an answer in integer"
+    end
+  rescue InvalidGuessError => e
+    puts "You have to enter an integer for answer"
+    @player_ans =gets.chomp
+  end
+  
 end
 
 def prompt_player_for_answer
@@ -80,14 +97,20 @@ end
 def repeat
 
   p "Do you want to keep playing?[yes/no] "
-  @answer = gets.chomp
-  if @answer == "yes" || @answer == "YES"
+  @answer = gets.chomp.downcase
+  if @answer == "yes"
+    setup
     game
+    repeat
   else
     scoreboard
     return
   end
 
+end
+
+def change_turn
+  @turn += 1
 end
 
 def game
@@ -109,3 +132,4 @@ end
 
 setup
 game
+repeat
