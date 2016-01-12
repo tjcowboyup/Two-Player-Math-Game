@@ -1,16 +1,22 @@
-@P1_life = @P2_life = 3
-@P1_score = @P2_score = 0
-@player_answer = true
-@turn = 1
+LIFE = 3
+
+class InvalidNameError < StandardError
+end
 
 class Player
-  attr_accessor :P1_life, :P2_life , :P1_score, :P2_score
-  def life
-  @P1_life = P1_life
-  @P2_life = P2_life
+  attr_accessor :name, :life, :score
+  def initialize(name)
+    self.name = name
+    self.life = LIFE
+    self.score = 0
   end
-  def score
-    @P1_score = P1_score
-    @P2_score = P2_score
+
+  def valid?
+    !(name == "" || nil)
   end
+
+  def raise_error_if_invalid
+    raise InvalidNameError if !valid?
+  end
+
 end
